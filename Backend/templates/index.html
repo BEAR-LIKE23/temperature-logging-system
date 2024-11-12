@@ -1,253 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Temperature Tracker</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <style>
-      body {
-        font-family: "Roboto", sans-serif;
-        background-color: #f0f8ff;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-      }
+        body {
+            font-family: "Roboto", sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+        }
 
-      .container {
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
-        width: 90%;
-        max-width: 900px;
-      }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-      h1 {
-        color: #0077b6;
-        text-align: center;
-        margin-bottom: 1.5rem;
-      }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #0077b6, #00b4d8);
+            border-radius: 12px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
-      .hero {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 2rem;
-      }
+        .header h1 {
+            margin: 0 0 15px 0;
+            font-size: 2.5em;
+        }
 
-      .hero-content {
-        flex: 1;
-        margin-right: 2rem;
-      }
+        .header p {
+            margin: 0 0 20px 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
 
-      .hero-content h2 {
-        color: #0077b6;
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-      }
+        .weather-icon {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+        }
 
-      .hero-content p {
-        color: #333;
-        font-size: 1.2rem;
-        line-height: 1.5;
-      }
+        .card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
 
-      .hero-image {
-        flex: 1;
-        max-width: 300px;
-      }
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
 
-      .hero-image img {
-        width: 100%;
-        height: auto;
-      }
+        .search-container input {
+            width: 100%;
+            padding: 12px 40px 12px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 2rem;
-      }
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
 
-      th,
-      td {
-        padding: 1rem;
-        text-align: center;
-        border-bottom: 1px solid #f0f0f0;
-      }
+        .chart-container {
+            height: 400px;
+            margin-bottom: 20px;
+        }
 
-      th {
-        background-color: #0077b6;
-        color: #fff;
-        font-weight: bold;
-      }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
 
-      tbody tr:hover {
-        background-color: #f0f0f0;
-      }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
 
-      .chart-container {
-        width: 100%;
-        height: 400px;
-      }
+        th {
+            background-color: #0077b6;
+            color: #fff;
+        }
 
-      button {
-        background-color: #0077b6;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
+        tbody tr {
+            cursor: pointer;
+        }
 
-      button:hover {
-        background-color: #005a8d;
-      }
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .selected-row {
+            background-color: #e3f2fd;
+        }
+
+        .details-card {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .details-card h3 {
+            color: #0077b6;
+            margin-top: 0;
+        }
+
+        .details-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .detail-item h4 {
+            margin: 0 0 10px 0;
+            color: #0077b6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+
+        /* Animation for the sun/cloud icon */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .weather-icon {
+            animation: float 3s ease-in-out infinite;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <div class="hero">
-        <div class="hero-content">
-          <h2>Welcome to the Temperature Tracker</h2>
-          <p>
-            Monitor and analyze your temperature data with our easy-to-use
-            application.
-          </p>
+        <div class="header">
+            <svg class="weather-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Sun -->
+                <circle cx="50" cy="50" r="20" fill="#FFD700" />
+                <g>
+                    <path d="M50 15 L50 5" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M50 95 L50 85" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M15 50 L5 50" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M95 50 L85 50" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M26 26 L19 19" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M81 81 L74 74" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M26 74 L19 81" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M81 19 L74 26" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                </g>
+                <!-- Cloud -->
+                <path d="M65 60 C65 51.716 71.716 45 80 45 C88.284 45 95 51.716 95 60 C95 68.284 88.284 75 80 75 L65 75 C65 75 65 68.284 65 60Z" fill="white" fill-opacity="0.9"/>
+            </svg>
+            <h1>Weather Temperature Tracker</h1>
+            <p>Monitor and analyze temperature variations throughout the day with detailed weather conditions, humidity levels, and atmospheric pressure readings. Stay informed about changing weather patterns and environmental conditions in real-time.</p>
         </div>
-        <div class="hero-image">
-          <img src="/api/placeholder/300/300" alt="Temperature Sensor" />
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by date (YYYY-MM-DD)">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
         </div>
-      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>Temperature (°C)</th>
-          </tr>
-        </thead>
-        <tbody id="temperatureData">
-          {% for entry in temperature_data %}
-          <tr>
-            <td>{{ entry.timestamp }}</td>
-            <td>{{ entry.temperature }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        <div class="card">
+            <div class="chart-container">
+                <canvas id="temperatureChart"></canvas>
+            </div>
+        </div>
 
-      <div class="chart-container">
-        <canvas id="temperatureChart"></canvas>
-      </div>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Temperature (°C)</th>
+                    </tr>
+                </thead>
+                <tbody id="temperatureData">
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
 
-      <div style="text-align: center">
-        <button onclick="fetchTemperatureData()">Refresh Data</button>
-      </div>
+        <div id="detailsCard" class="card details-card">
+            <h3>Temperature Details</h3>
+            <div class="details-content">
+                <div class="detail-item">
+                    <h4>Date & Time</h4>
+                    <p id="detailTimestamp"></p>
+                </div>
+                <div class="detail-item">
+                    <h4>Temperature</h4>
+                    <p id="detailTemperature"></p>
+                </div>
+                <div class="detail-item">
+                    <h4>Additional Information</h4>
+                    <ul id="detailExtra">
+                        <li>Humidity: <span id="detailHumidity"></span></li>
+                        <li>Pressure: <span id="detailPressure"></span></li>
+                        <li>Weather: <span id="detailWeather"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-      let temperatureChart;
+        // Sample data - replace with your actual data
+        let temperatureData = [
+            { timestamp: '2024-03-01 10:00', temperature: 22.5, humidity: 45, pressure: 1013, weather: 'Clear' },
+            { timestamp: '2024-03-01 11:00', temperature: 23.1, humidity: 46, pressure: 1012, weather: 'Partly Cloudy' },
+            { timestamp: '2024-03-01 12:00', temperature: 24.2, humidity: 44, pressure: 1012, weather: 'Sunny' },
+            { timestamp: '2024-03-01 13:00', temperature: 25.0, humidity: 43, pressure: 1011, weather: 'Sunny' },
+            { timestamp: '2024-03-01 14:00', temperature: 24.8, humidity: 45, pressure: 1011, weather: 'Partly Cloudy' }
+        ];
 
-      function updateChart(labels, temperatures) {
-        const ctx = document
-          .getElementById("temperatureChart")
-          .getContext("2d");
+        let chart;
 
-        if (temperatureChart) {
-          temperatureChart.destroy(); // Destroy the old chart before updating
+        // Initialize the chart
+        function initChart(data) {
+            const ctx = document.getElementById('temperatureChart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.timestamp.split(' ')[1]),
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: data.map(d => d.temperature),
+                        borderColor: '#0077b6',
+                        backgroundColor: 'rgba(0, 119, 182, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            showDetails(data[index]);
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
         }
 
-        temperatureChart = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: "Temperature (°C)",
-                data: temperatures,
-                borderColor: "#0077b6",
-                backgroundColor: "rgba(0, 119, 182, 0.2)",
-                borderWidth: 2,
-                fill: true,
-                tension: 0.1,
-                pointRadius: 5,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                display: true,
-                title: {
-                  display: true,
-                  text: "Timestamp",
-                },
-              },
-              y: {
-                display: true,
-                title: {
-                  display: true,
-                  text: "Temperature (°C)",
-                },
-              },
-            },
-            plugins: {
-              title: {
-                display: false,
-              },
-            },
-          },
-        });
-      }
-
-      function fetchTemperatureData() {
-        fetch("/api/temperature_data")
-          .then((response) => response.json())
-          .then((data) => {
-            const tableBody = document.getElementById("temperatureData");
-            tableBody.innerHTML = ""; // Clear the table before updating
-
-            const labels = [];
-            const temperatures = [];
-
-            data.forEach((entry) => {
-              const row = document.createElement("tr");
-              const timestampCell = document.createElement("td");
-              const tempCell = document.createElement("td");
-
-              timestampCell.textContent = entry.timestamp;
-              tempCell.textContent = entry.temperature;
-
-              row.appendChild(timestampCell);
-              row.appendChild(tempCell);
-              tableBody.appendChild(row);
-
-              labels.push(entry.timestamp);
-              temperatures.push(entry.temperature);
+        // Update table with data
+        function updateTable(data) {
+            const tbody = document.getElementById('temperatureData');
+            tbody.innerHTML = '';
+            
+            data.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.timestamp}</td>
+                    <td>${entry.temperature}°C</td>
+                `;
+                row.onclick = () => showDetails(entry);
+                tbody.appendChild(row);
             });
+        }
 
-            updateChart(labels, temperatures);
-          })
-          .catch((error) => console.error("Error fetching data:", error));
-      }
+        // Show details for selected temperature
+        function showDetails(entry) {
+            const detailsCard = document.getElementById('detailsCard');
+            document.getElementById('detailTimestamp').textContent = entry.timestamp;
+            document.getElementById('detailTemperature').textContent = `${entry.temperature}°C`;
+            document.getElementById('detailHumidity').textContent = `${entry.humidity}%`;
+            document.getElementById('detailPressure').textContent = `${entry.pressure} hPa`;
+            document.getElementById('detailWeather').textContent = entry.weather;
+            detailsCard.style.display = 'block';
 
-      // Fetch data when the page loads
-      fetchTemperatureData();
-      // Optionally, set up periodic data fetch
-      setInterval(fetchTemperatureData, 10000);
+            // Highlight selected row
+            const rows = document.querySelectorAll('#temperatureData tr');
+            rows.forEach(row => {
+                row.classList.remove('selected-row');
+                if (row.cells[0].textContent === entry.timestamp) {
+                    row.classList.add('selected-row');
+                }
+            });
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchValue = e.target.value.toLowerCase();
+            const filteredData = temperatureData.filter(entry => 
+                entry.timestamp.toLowerCase().includes(searchValue)
+            );
+            initChart(filteredData);
+            updateTable(filteredData);
+            document.getElementById('detailsCard').style.display = 'none';
+        });
+
+        // Initialize the page
+        initChart(temperatureData);
+        updateTable(temperatureData);
+
+        // Optional: Fetch real data from API
+        function fetchTemperatureData() {
+            fetch('/api/temperature_data')
+                .then(response => response.json())
+                .then(data => {
+                    temperatureData = data;
+                    initChart(data);
+                    updateTable(data);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Uncomment to enable periodic data fetch
+        setInterval(fetchTemperatureData, 10000);
     </script>
-  </body>
+</body>
 </html>
