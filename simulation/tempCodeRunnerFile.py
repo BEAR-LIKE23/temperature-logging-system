@@ -9,7 +9,7 @@ def generate_temperature():
 
 
 def send_data_to_server(temp):
-    url = "http://localhost:5000/api/temperature_data"  # Simulated API endpoint
+    url = "http://localhost:5000  # Simulated API endpoint
     data = {"temperature": temp, "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")}
     try:
         response = requests.post(url, json=data)
